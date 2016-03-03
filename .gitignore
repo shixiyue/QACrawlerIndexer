@@ -7,3 +7,9 @@ release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
+
+src/main/resources/bloompath/bloom.obj
+
+src/main/resources/filecachepath/www.quora.com.cursor.txt
+
+src/main/resources/filecachepath/www.quora.com.urls.txt

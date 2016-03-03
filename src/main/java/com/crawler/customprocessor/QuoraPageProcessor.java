@@ -10,6 +10,7 @@ import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.scheduler.component.BloomFilterDuplicateRemover;
 import us.codecraft.webmagic.selector.Html;
 
+import java.io.File;
 import java.util.List;
 
 import javax.management.JMException;
@@ -100,13 +101,36 @@ public class QuoraPageProcessor implements PageProcessor {
      */
     public static void main(String[] args) throws JMException {
 
+        final String bloomObjPath = "src/main/resources/bloompath/bloom.obj";
+        String fileCachePath = "src/main/resources/filecachepath/";
+        String seleniumPath = "src/main/resources/chromedriver";
+        String url = "https://www.quora.com/How-can-I-study-more-effectively-2";
+        int numOfExpectedData = 50000000;
+        double falseRate = 0.01;
+        final PersistentBloomFilter pbf;
+
+        File file = new File(bloomObjPath);
+        if(file.exists() && file.isFile()) {
+            pbf = new PersistentBloomFilter(numOfExpectedData, falseRate, bloomObjPath);
+            System.out.println("Bloom Filter Object exists in the path, loading it to current process...");
+        } else {
+            pbf = new PersistentBloomFilter(numOfExpectedData, falseRate);
+            System.out.println("Bloom Filter Object does not exist, preparing a new one...");
+        }
+
         Spider quoraSpider = Spider
                 .create(new QuoraPageProcessor())
-                .addUrl("https://www.quora.com/How-can-I-study-more-effectively-2")
+                .addUrl(url)
                 .addPipeline(new QuoraPipeline())
-                .setDownloader(new SeleniumDownloader("src/main/resources/chromedriver"))
+                .setDownloader(new SeleniumDownloader(seleniumPath))
                 .thread(5)
-                .setScheduler(new FileCacheQueueScheduler("src/main/resources/filecachequeue/").setDuplicateRemover(new BloomFilterDuplicateRemover(30000000)));
+                .setScheduler(new FileCacheQueueScheduler(fileCachePath).setDuplicateRemover(pbf));
+
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                pbf.storeBloomFilter(bloomObjPath);
+            }
+        }));
 
         quoraSpider.run();
 

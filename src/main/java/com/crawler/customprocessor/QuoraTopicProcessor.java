@@ -62,14 +62,20 @@ public class QuoraTopicProcessor implements PageProcessor {
     public Site getSite(){return site;}
 
     public static void main(String args[]) {
+
+        String bloomPath = "src/main/resources/bloompath/bloom.obj";
+        String fileCachePath = "src/main/resources/filecachepath/";
+        String seleniumPath = "src/main/resources/chromedriver";
+        String url = "https://www.quora.com/sitemap/topics?page_id=1506";
         Spider quoraTopicSpider = Spider
                 .create(new QuoraTopicProcessor())
-                .addUrl("https://www.quora.com/sitemap/topics?page_id=1506")
+                .addUrl(url)
                 .addPipeline(new QuoraTopicPipeline())
-                .setDownloader(new SeleniumDownloader("src/main/resources/chromedriver"))
+                .setDownloader(new SeleniumDownloader(seleniumPath))
                 .thread(3)
-                .setScheduler(new FileCacheQueueScheduler("/Users/sesame/downloads/quoratopic").setDuplicateRemover(new BloomFilterDuplicateRemover(5000000)));
+                .setScheduler(new FileCacheQueueScheduler(fileCachePath).setDuplicateRemover(new BloomFilterDuplicateRemover(50000000)));
 
         quoraTopicSpider.run();
+
     }
 }
