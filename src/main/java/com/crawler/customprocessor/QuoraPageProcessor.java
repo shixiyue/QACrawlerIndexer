@@ -1,5 +1,6 @@
 package com.crawler.customprocessor;
 
+import com.crawler.customutil.PersistentBloomFilter;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -7,7 +8,6 @@ import us.codecraft.webmagic.downloader.selenium.SeleniumDownloader;
 import us.codecraft.webmagic.monitor.SpiderMonitor;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
-import us.codecraft.webmagic.scheduler.component.BloomFilterDuplicateRemover;
 import us.codecraft.webmagic.selector.Html;
 
 import java.io.File;

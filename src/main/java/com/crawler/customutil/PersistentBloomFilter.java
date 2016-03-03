@@ -1,4 +1,4 @@
-package com.crawler.customprocessor;
+package com.crawler.customutil;
 
 /**
  * Created by sesame on 3/3/16.
