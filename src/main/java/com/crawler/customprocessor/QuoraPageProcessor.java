@@ -101,7 +101,7 @@ public class QuoraPageProcessor implements PageProcessor {
      */
     public static void main(String[] args) throws JMException {
 
-        final String bloomObjPath = "src/main/resources/bloompath/bloom.obj";
+        final String bloomObjPath = "src/main/resources/bloompath/bloom.ser";
         String fileCachePath = "src/main/resources/filecachepath/";
         String seleniumPath = "src/main/resources/chromedriver";
         String url = "https://www.quora.com/How-can-I-study-more-effectively-2";
