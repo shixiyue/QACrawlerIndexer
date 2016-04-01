@@ -71,5 +71,7 @@
     <orderEntry type="library" name="Maven: org.mongodb:mongodb-driver-core:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:bson:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: net.htmlparser.jericho:jericho-html:3.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-analyzers-common:4.5.0" level="project" />
   </component>
 </module>

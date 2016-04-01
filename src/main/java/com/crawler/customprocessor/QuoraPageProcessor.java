@@ -1,5 +1,6 @@
 package com.crawler.customprocessor;
 
+import com.crawler.customutil.Indexer;
 import com.crawler.customutil.PersistentBloomFilter;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
@@ -34,6 +35,7 @@ public class QuoraPageProcessor implements PageProcessor {
             .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3")
             .setCharset("UTF-8");
 
+//    private static Indexer indexer = null;
 
     /**
      *
@@ -77,6 +79,13 @@ public class QuoraPageProcessor implements PageProcessor {
             page.putField(num, answerText);
             count++;
         }
+
+//        try {
+//            indexer.createIndex(answers, question, categories, url);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
     }
 
     public String extractAllText(String htmlText) {
@@ -104,7 +113,7 @@ public class QuoraPageProcessor implements PageProcessor {
         final String bloomObjPath = "src/main/resources/bloompath/bloom.ser";
         String fileCachePath = "src/main/resources/filecachepath/";
         String seleniumPath = "src/main/resources/chromedriver";
-        String url = "https://www.quora.com/How-can-I-study-more-effectively-2";
+        String url = "https://www.quora.com/I-wanna-study-hard-but-I-cant-how-can-I-motivate-myself-for-that";
         int numOfExpectedData = 50000000;
         double falseRate = 0.01;
         final PersistentBloomFilter pbf;
@@ -129,8 +138,15 @@ public class QuoraPageProcessor implements PageProcessor {
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             public void run() {
                 pbf.storeBloomFilter(bloomObjPath);
+//                try {
+//                    indexer.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
             }
         }));
+
+//        indexer = new Indexer("/Users/sesame/Downloads/indexpath/");
 
         quoraSpider.run();
 

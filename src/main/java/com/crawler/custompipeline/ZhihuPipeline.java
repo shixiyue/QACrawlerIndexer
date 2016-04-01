@@ -11,7 +11,7 @@ import us.codecraft.webmagic.utils.FilePersistentBase;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
-public class ZhihuPipeline extends FilePersistentBase implements Pipeline {
+public class ZhihuPipeline implements Pipeline {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private MongoClient mongoClient;
@@ -20,12 +20,8 @@ public class ZhihuPipeline extends FilePersistentBase implements Pipeline {
     /**
      * new JsonFilePageModelPipeline with default path "/data/webmagic/"
      */
-    public ZhihuPipeline() {
-        setPath("/data/webmagic");
-    }
 
-    public ZhihuPipeline(String path) {
-        setPath(path);
+    public ZhihuPipeline() {
         mongoClient = new MongoClient("localhost", 27017);
         db = mongoClient.getDatabase("qadb");
     }

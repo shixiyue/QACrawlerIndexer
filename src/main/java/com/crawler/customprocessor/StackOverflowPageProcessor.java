@@ -123,14 +123,14 @@ public class StackOverflowPageProcessor implements PageProcessor {
                 .addUrl("http://stackoverflow.com/questions?page=1&sort=newest")
                 .addPipeline(
                         new JsonFilePipeline(
-                                "/Users/sesame/downloads/stackoverflowcrawlresult"))
+                                "/Users/sesame/Downloads/stackoverflowcrawlresult"))
                 .setDownloader(
                         new SeleniumDownloader(
                                 "src/main/resources/chromedriver"))
                 .thread(1)
                 .setScheduler(
                         new FileCacheQueueScheduler(
-                                "/Users/sesame/downloads/stackoverflow")
+                                "/Users/sesame/Downloads/stackoverflow")
                                 .setDuplicateRemover(new BloomFilterDuplicateRemover(
                                         20000000)));
 

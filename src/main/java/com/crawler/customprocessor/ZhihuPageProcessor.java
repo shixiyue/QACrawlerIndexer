@@ -1,5 +1,6 @@
 package com.crawler.customprocessor;
 
+import com.crawler.custompipeline.ZhihuPipeline;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -33,12 +34,14 @@ public class ZhihuPageProcessor implements PageProcessor {
         String url = page.getUrl().toString();
         String question = page.getHtml().xpath("//h2[@class='zm-item-title zm-editable-content']/text()").toString();
         String description = page.getHtml().xpath("//div[@class='zm-editable-content']/div/text()").toString();
-        String answerNo = page.getHtml().xpath("//h3[@id='zh-question-answer-num']/text()").toString();
+        List<String> categories = page.getHtml().xpath("//").all();
+//        String answerNo = page.getHtml().xpath("//h3[@id='zh-question-answer-num']/text()").toString();
         List<String> answers = page.getHtml().xpath("//div[@class='zm-editable-content clearfix']").all();
+
         page.putField("url", url);
         page.putField("question", question);
         page.putField("description", description);
-        page.putField("answerNo", answerNo);
+//        page.putField("answerNo", answerNo);
 
         int count = 1;
         for(String answer:answers) {
@@ -47,7 +50,7 @@ public class ZhihuPageProcessor implements PageProcessor {
             count++;
         }
 
-        if(answerNo == null) {
+        if (answers.size() == 0 || answers.size() == 1) {
             page.setSkip(true);
         }
     }
@@ -59,7 +62,7 @@ public class ZhihuPageProcessor implements PageProcessor {
 
     public static void main(String[] args) throws JMException {
         Spider zhihuSpider = Spider.create(new ZhihuPageProcessor()).addUrl("https://www.zhihu.com/question/20696837")
-                .addPipeline(new JsonFilePipeline("/Users/Beibei/downloads/crawlresult"))
+                .addPipeline(new ZhihuPipeline())
                 .setDownloader(new SeleniumDownloader("src/main/resources/chromedriver"))
                 .thread(5)
                 .setScheduler(new FileCacheQueueScheduler("/Users/Beibei/downloads/crawlresult").setDuplicateRemover(new BloomFilterDuplicateRemover(10000000)));
