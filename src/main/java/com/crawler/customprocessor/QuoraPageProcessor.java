@@ -12,7 +12,10 @@ import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.selector.Html;
 
 import java.io.File;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.List;
+import java.util.Locale;
 
 import javax.management.JMException;
 
@@ -62,6 +65,11 @@ public class QuoraPageProcessor implements PageProcessor {
                 .getHtml()
                 .xpath("//div[@class='pagedlist_item']//div[@class='ExpandedQText ExpandedAnswer']/span")
                 .all();
+        List<String> votes = page
+                .getHtml()
+                .xpath("//div[@class='pagedlist_item']//div[@class='ExpandedQText ExpandedAnswer']/div")
+                .all();
+
         page.putField("url", url);
         page.putField("categories", categories);
         page.putField("question", question);
@@ -71,13 +79,24 @@ public class QuoraPageProcessor implements PageProcessor {
             page.setSkip(true);
         }
 
-        int count = 1;
-        for (String answer : answers) {
-            String num = "answer" + count;
-            String answerText = extractAllText(new Html(answer).xpath(
+        for (int i = 0; i < answers.size(); i++) {
+            String num = "answer" + (i + 1);
+            String answerText = extractAllText(new Html(answers.get(i)).xpath(
                     "//span[@class='rendered_qtext']").toString());
             page.putField(num, answerText);
-            count++;
+            String votesText = new Html(votes.get(i)).xpath(
+                    "//a[@class='AnswerVoterListModalLink VoterListModalLink']/text()").toString();
+            int vote = 0;
+            if (votesText != null) {
+            	try {
+            		NumberFormat usFormat = NumberFormat.getNumberInstance(Locale.US);
+            		vote = usFormat.parse(votesText.split(" ")[0]).intValue();
+            	} catch (ParseException e) {
+            		e.printStackTrace();
+            	}
+            }
+            String voteIndex = "vote" + (i + 1);
+            page.putField(voteIndex, vote);
         }
 
 //        try {
@@ -130,9 +149,9 @@ public class QuoraPageProcessor implements PageProcessor {
         Spider quoraSpider = Spider
                 .create(new QuoraPageProcessor())
                 .addUrl(url)
-                .addPipeline(new QuoraPipeline())
+                //.addPipeline(new QuoraPipeline())
                 .setDownloader(new SeleniumDownloader(seleniumPath))
-                .thread(5)
+                .thread(1)
                 .setScheduler(new FileCacheQueueScheduler(fileCachePath).setDuplicateRemover(pbf));
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
