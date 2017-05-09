@@ -7,15 +7,15 @@ import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.downloader.selenium.SeleniumDownloader;
 import us.codecraft.webmagic.monitor.SpiderMonitor;
+import us.codecraft.webmagic.pipeline.JsonFilePipeline;
 import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.selector.Html;
 
 import java.io.File;
-import java.text.NumberFormat;
-import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import javax.management.JMException;
 
@@ -24,6 +24,10 @@ import com.crawler.custompipeline.QuoraPipeline;
 import net.htmlparser.jericho.Source;
 
 public class QuoraPageProcessor implements PageProcessor {
+	
+	public final String ANSWER = "answer";
+	public final String VOTE = "vote";
+	
 
     private Site site = Site
             .me()
@@ -79,25 +83,27 @@ public class QuoraPageProcessor implements PageProcessor {
             page.setSkip(true);
         }
 
+        ArrayList<HashMap<String, String>> answerList = new ArrayList<HashMap<String, String>>();
         for (int i = 0; i < answers.size(); i++) {
-            String num = "answer" + (i + 1);
+        	HashMap<String, String> answer = new HashMap<String, String>();
+        	
             String answerText = extractAllText(new Html(answers.get(i)).xpath(
                     "//span[@class='rendered_qtext']").toString());
-            page.putField(num, answerText);
+            answer.put(ANSWER, answerText);
+            
             String votesText = new Html(votes.get(i)).xpath(
                     "//a[@class='AnswerVoterListModalLink VoterListModalLink']/text()").toString();
-            int vote = 0;
-            if (votesText != null) {
-            	try {
-            		NumberFormat usFormat = NumberFormat.getNumberInstance(Locale.US);
-            		vote = usFormat.parse(votesText.split(" ")[0]).intValue();
-            	} catch (ParseException e) {
-            		e.printStackTrace();
-            	}
+            if (votesText == null) {
+            	votesText = "0";
+            } else {
+            	votesText = votesText.split(" ")[0].replaceAll(",", "");
             }
-            String voteIndex = "vote" + (i + 1);
-            page.putField(voteIndex, vote);
+            answer.put(VOTE, votesText);
+            
+            answerList.add(answer);
         }
+        
+        page.putField("answers", answerList);
 
 //        try {
 //            indexer.createIndex(answers, question, categories, url);
@@ -149,9 +155,10 @@ public class QuoraPageProcessor implements PageProcessor {
         Spider quoraSpider = Spider
                 .create(new QuoraPageProcessor())
                 .addUrl(url)
-                //.addPipeline(new QuoraPipeline())
+                .addPipeline(new JsonFilePipeline(
+                		"/crawlResult"))
                 .setDownloader(new SeleniumDownloader(seleniumPath))
-                .thread(1)
+                .thread(5)
                 .setScheduler(new FileCacheQueueScheduler(fileCachePath).setDuplicateRemover(pbf));
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
