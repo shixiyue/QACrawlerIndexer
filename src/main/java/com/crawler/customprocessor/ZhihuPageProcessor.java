@@ -1,6 +1,5 @@
 package com.crawler.customprocessor;
 
-import com.crawler.custompipeline.ZhihuPipeline;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -62,7 +61,7 @@ public class ZhihuPageProcessor implements PageProcessor {
 
     public static void main(String[] args) throws JMException {
         Spider zhihuSpider = Spider.create(new ZhihuPageProcessor()).addUrl("https://www.zhihu.com/question/20696837")
-                .addPipeline(new ZhihuPipeline())
+                //.addPipeline(new ZhihuPipeline())
                 .setDownloader(new SeleniumDownloader("src/main/resources/chromedriver"))
                 .thread(5)
                 .setScheduler(new FileCacheQueueScheduler("/Users/Beibei/downloads/crawlresult").setDuplicateRemover(new BloomFilterDuplicateRemover(10000000)));
