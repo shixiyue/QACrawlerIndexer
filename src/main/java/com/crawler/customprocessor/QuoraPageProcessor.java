@@ -1,6 +1,7 @@
 package com.crawler.customprocessor;
 
 import com.crawler.customutil.PersistentBloomFilter;
+import com.crawler.customutil.Config;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.Spider;
@@ -21,9 +22,6 @@ import javax.management.JMException;
 import net.htmlparser.jericho.Source;
 
 public class QuoraPageProcessor implements PageProcessor {
-
-	public final String ANSWER = "answer";
-	public final String VOTE = "vote";
 
 	private Site site = Site.me().setCycleRetryTimes(5).setRetryTimes(5).setSleepTime(500).setTimeOut(5 * 60 * 1000)
 			.setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0")
@@ -56,11 +54,11 @@ public class QuoraPageProcessor implements PageProcessor {
 				.xpath("//div[@class='question_details']//span[@class='rendered_qtext']/text()").toString();
 		ArrayList<HashMap<String, String>> answerList = getAnswerList(page);
 
-		page.putField("url", url);
-		page.putField("categories", categories);
-		page.putField("question", question);
-		page.putField("description", description);
-		page.putField("answers", answerList);
+		page.putField(Config.URL, url);
+		page.putField(Config.CATEGORIES, categories);
+		page.putField(Config.QUESTION, question);
+		page.putField(Config.DESCRIPTION, description);
+		page.putField(Config.ANSWERS, answerList);
 
 		if (shouldSkip(question, answerList)) {
 			page.setSkip(true);
@@ -86,8 +84,8 @@ public class QuoraPageProcessor implements PageProcessor {
 					new Html(answers.get(i)).xpath("//span[@class='rendered_qtext']").toString());
 
 			HashMap<String, String> answer = new HashMap<String, String>();
-			answer.put(VOTE, votesText);
-			answer.put(ANSWER, answerText);
+			answer.put(Config.VOTE, votesText);
+			answer.put(Config.ANSWER, answerText);
 			answerList.add(answer);
 		}
 		return answerList;
