@@ -18,13 +18,14 @@ POST_TYPE_ID = 'PostTypeId'
 SCORE = 'Score'
 TITLE = 'Title'
 TAGS = 'Tags'
+PARENT_ID = 'ParentId'
+
 URL = 'url'
 CATEGORIES = 'categories'
 QUESTION = 'question'
 DESCRIPTION = 'description'
 VOTE = 'vote'
 ANSWERS = 'answers'
-PARENT_ID = 'ParentId'
 ANSWER = 'answer'
 
 special_websites = {

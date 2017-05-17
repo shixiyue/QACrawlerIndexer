@@ -4,29 +4,53 @@ import re
 import os
 from utility import *
 
-def read_posts():
-    all_websites = filter(lambda filename: filename != ".DS_Store", os.listdir(data_path))
+html_re = re.compile('<[^<]+?>')
+
+def process_posts():
+    all_websites = os.listdir(data_path)
     for website in all_websites:
-        with open(data_path + website + data_file_name, mode='r', encoding='utf-8') as posts:
-            os.makedirs(os.path.dirname(parsed_data_path + website + '/'), exist_ok=True)
-            skip_first_two_rows(posts)
-            for line in posts:
-                try:
-                    xml = ET.fromstring(line)
-                    parse_xml(xml, website)
-                except:
-                    continue
+        data_directory = data_path + website + data_file_name
+        parsed_data_directory = parsed_data_path + website + '/'
 
-def parse_xml(xml, website):
-    post_id = xml.attrib[ID]
-    description = remove_new_line(remove_html_tags(xml.attrib[BODY]))
-    type_id = xml.attrib[POST_TYPE_ID]
-    vote = xml.attrib[SCORE]
+        read_posts(website, data_directory, parsed_data_directory)
+        remove_not_useful_question(parsed_data_directory)
+
+def read_posts(website, data_directory, parsed_data_directory):
+    with open(data_directory, mode='r', encoding='utf-8') as posts:
+        os.makedirs(os.path.dirname(parsed_data_directory), exist_ok=True)
+        skip_first_two_rows(posts)
+        for line in posts:
+            try:
+                xml_line = ET.fromstring(line)
+                parse_line(xml_line, website)
+            except:
+                continue
+
+# Parses the line in xml format that belongs to the given website
+def parse_line(xml_line, website):
+    post_id = xml_line.attrib[ID]
+    description = remove_new_line(remove_html_tags(xml_line.attrib[BODY]))
+    type_id = xml_line.attrib[POST_TYPE_ID]
+    vote = int(xml_line.attrib[SCORE])
     if type_id == QUESTION_TYPE_ID:
-        parse_question(xml, website, post_id, description, vote)
+        parse_question(xml_line, website, post_id, description, vote)
     if type_id == ANSWER_TYPE_ID:
-        parse_answer(xml, website, description, vote)
+        if should_skip_answer(vote):
+            return
+        parse_answer(xml_line, website, description, vote)
 
+def remove_not_useful_question(parsed_data_directory):
+    all_parsed_data = os.listdir(parsed_data_directory)
+    for data_file_name in all_parsed_data:
+        with open(parsed_data_directory + data_file_name, mode='r', encoding='utf-8') as json_data:
+            question_answers = json.load(json_data)
+        if len(question_answers[ANSWERS]) == 0:
+            os.remove(parsed_data_directory + data_file_name)
+
+def should_skip_answer(vote):
+    return vote < 1
+
+# Parses the content of the given question
 def parse_question(xml, website, post_id, description, vote):
     url = LINK_PREFIX + website + LINK_SUFFIX + post_id
     title = xml.attrib[TITLE]
@@ -38,6 +62,7 @@ def parse_question(xml, website, post_id, description, vote):
     with open(file_name, mode='w', encoding='utf-8') as json_data:
         json.dump(question_answers, json_data, ensure_ascii=False)
 
+# Parses the content of the given answer
 def parse_answer(xml, website, description, vote):
     post_id = xml.attrib[PARENT_ID]
     file_name = parsed_data_path + website + '/' + post_id + '.json'
@@ -52,7 +77,6 @@ def skip_first_two_rows(posts):
     next(posts)
     next(posts)
 
-html_re = re.compile('<[^<]+?>')
 def remove_html_tags(string):
      return (re.sub(html_re, '', string)).replace('&nbsp;', '')
 
@@ -68,4 +92,4 @@ def format_tags(string):
     else:
         return []
 
-read_posts()
+process_posts()
