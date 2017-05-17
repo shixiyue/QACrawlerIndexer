@@ -1,4 +1,4 @@
-target/
+QAWebCrawler/target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -8,8 +8,10 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 
-src/main/resources/bloompath/bloom.obj
+QAWebCrawler/src/main/resources/bloompath/bloom.obj
 
-src/main/resources/filecachepath/www.quora.com.cursor.txt
+QAWebCrawler/src/main/resources/filecachepath/www.quora.com.cursor.txt
 
-src/main/resources/filecachepath/www.quora.com.urls.txt
+QAWebCrawler/src/main/resources/filecachepath/www.quora.com.urls.txt
+
+.*
