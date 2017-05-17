@@ -22,8 +22,8 @@ import javax.management.JMException;
 import net.htmlparser.jericho.Source;
 
 /**
- * Represents a page processor that can process web pages of Quora.
- * It uses the crawler framework WebMagic.
+ * Represents a page processor that can process web pages of Quora. It uses the
+ * crawler framework WebMagic.
  */
 public class QuoraPageProcessor implements PageProcessor {
 
@@ -43,7 +43,8 @@ public class QuoraPageProcessor implements PageProcessor {
 	}
 
 	/**
-	 * Finds urls from the Quora related question field and adds them to the queue to be crawled.
+	 * Finds urls from the Quora related question field and adds them to the
+	 * queue to be crawled.
 	 */
 	private void addRelatedQuestionsUrls(Page page) {
 		List<String> relatedUrl = page.getHtml()
@@ -52,7 +53,8 @@ public class QuoraPageProcessor implements PageProcessor {
 	}
 
 	/**
-	 * Extracts useful content (url, question, description, topics and answer list) from the page.
+	 * Extracts useful content (url, question, description, topics and answer
+	 * list) from the page.
 	 */
 	private void extractContent(Page page) {
 		String url = page.getUrl().toString();
@@ -77,6 +79,7 @@ public class QuoraPageProcessor implements PageProcessor {
 
 	/**
 	 * Gets answers and their votes from the web page.
+	 * 
 	 * @return ArrayList<HashMap<String, Object>> answerList
 	 */
 	private ArrayList<HashMap<String, Object>> getAnswerList(Page page) {
@@ -91,7 +94,8 @@ public class QuoraPageProcessor implements PageProcessor {
 					.xpath("//a[@class='AnswerVoterListModalLink VoterListModalLink']/text()").toString();
 			int vote;
 			if (votesText == null) { // i.e the answer does not have any vote
-				// then we consider the answer not useful and don't store it. (There's no negative vote in Quora)
+				// then we consider the answer not useful and don't store it.
+				// (There's no negative vote in Quora)
 				continue;
 			} else {
 				vote = formatVote(votesText);
@@ -109,6 +113,7 @@ public class QuoraPageProcessor implements PageProcessor {
 
 	/**
 	 * Parses votesText, which is in the format "XX,XXX Upvotes".
+	 * 
 	 * @return Integer an integer representation of the number of votes
 	 */
 	private Integer formatVote(String votesText) {
@@ -116,7 +121,8 @@ public class QuoraPageProcessor implements PageProcessor {
 	}
 
 	/**
-	 * Returns true when the page is not useful and should be skipped, i.e. the question is empty or the list of useful answers is empty.
+	 * Returns true when the page is not useful and should be skipped, i.e. the
+	 * question is empty or the list of useful answers is empty.
 	 */
 	private boolean shouldSkip(String question, ArrayList<HashMap<String, Object>> answerList) {
 		return question.isEmpty() || answerList.isEmpty();
