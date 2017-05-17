@@ -47,15 +47,15 @@ public class QuoraPageProcessor implements PageProcessor {
 	private void extractContent(Page page) {
 		String url = page.getUrl().toString();
 		String question = page.getHtml().xpath("//h1//span[@class='rendered_qtext']/text()").toString();
-		List<String> categories = page.getHtml()
+		List<String> topics = page.getHtml()
 				.xpath("//div[@class='QuestionTopicListItem TopicListItem topic_pill']/div/a//span[@class='TopicNameSpan TopicName']/text()")
 				.all();
 		String description = page.getHtml()
 				.xpath("//div[@class='question_details']//span[@class='rendered_qtext']/text()").toString();
-		ArrayList<HashMap<String, String>> answerList = getAnswerList(page);
+		ArrayList<HashMap<String, Object>> answerList = getAnswerList(page);
 
 		page.putField(Config.URL, url);
-		page.putField(Config.CATEGORIES, categories);
+		page.putField(Config.TOPICS, topics);
 		page.putField(Config.QUESTION, question);
 		page.putField(Config.DESCRIPTION, description);
 		page.putField(Config.ANSWERS, answerList);
@@ -65,12 +65,12 @@ public class QuoraPageProcessor implements PageProcessor {
 		}
 	}
 
-	private ArrayList<HashMap<String, String>> getAnswerList(Page page) {
+	private ArrayList<HashMap<String, Object>> getAnswerList(Page page) {
 		List<String> answers = page.getHtml()
 				.xpath("//div[@class='pagedlist_item']//div[@class='ExpandedQText ExpandedAnswer']/span").all();
 		List<String> votes = page.getHtml()
 				.xpath("//div[@class='pagedlist_item']//div[@class='ExpandedQText ExpandedAnswer']/div").all();
-		ArrayList<HashMap<String, String>> answerList = new ArrayList<HashMap<String, String>>();
+		ArrayList<HashMap<String, Object>> answerList = new ArrayList<HashMap<String, Object>>();
 
 		for (int i = 0; i < answers.size(); i++) {
 			String votesText = new Html(votes.get(i))
@@ -83,15 +83,15 @@ public class QuoraPageProcessor implements PageProcessor {
 			String answerText = extractAllText(
 					new Html(answers.get(i)).xpath("//span[@class='rendered_qtext']").toString());
 
-			HashMap<String, String> answer = new HashMap<String, String>();
-			answer.put(Config.VOTE, votesText);
+			HashMap<String, Object> answer = new HashMap<String, Object>();
+			answer.put(Config.VOTE, Integer.parseInt(votesText));
 			answer.put(Config.ANSWER, answerText);
 			answerList.add(answer);
 		}
 		return answerList;
 	}
 
-	private boolean shouldSkip(String question, ArrayList<HashMap<String, String>> answerList) {
+	private boolean shouldSkip(String question, ArrayList<HashMap<String, Object>> answerList) {
 		return question.isEmpty() || answerList.isEmpty();
 	}
 
