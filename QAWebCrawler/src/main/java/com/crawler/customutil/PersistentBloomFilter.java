@@ -19,21 +19,20 @@ public class PersistentBloomFilter implements DuplicateRemover {
     private double fpp;
     private AtomicInteger counter;
     private final BloomFilter<CharSequence> bloomFilter;
-
-    public PersistentBloomFilter(int expectedInsertions) {
-        this(expectedInsertions, 0.01);
-    }
-
-    public PersistentBloomFilter(int expectedInsertions, double fpp) {
-        this.expectedInsertions = expectedInsertions;
-        this.fpp = fpp;
-        this.bloomFilter = rebuildBloomFilter();
-    }
+    private String path;
 
     public PersistentBloomFilter(int expectedInsertions, double fpp, String path) {
         this.expectedInsertions = expectedInsertions;
         this.fpp = fpp;
-        this.bloomFilter = rebuildBloomFilter(path);
+        this.path = path;
+        File file = new File(path);
+		if (file.exists() && file.isFile()) {
+			System.out.println("Bloom Filter Object exists in the path, loading it to current process...");
+			this.bloomFilter = rebuildBloomFilter(path);
+		} else {
+			System.out.println("Bloom Filter Object does not exist, preparing a new one...");
+			this.bloomFilter = rebuildBloomFilter();
+		}
     }
 
     protected BloomFilter<CharSequence> rebuildBloomFilter() {
@@ -47,7 +46,7 @@ public class PersistentBloomFilter implements DuplicateRemover {
         return (BloomFilter) object;
     }
 
-    public void storeBloomFilter(String path) {
+    public void storeBloomFilter() {
         writeObject(bloomFilter, path);
     }
 
@@ -56,7 +55,10 @@ public class PersistentBloomFilter implements DuplicateRemover {
         boolean isDuplicate = bloomFilter.mightContain(getUrl(request));
         if (!isDuplicate) {
             bloomFilter.put(getUrl(request));
-            counter.incrementAndGet();
+            if (counter.incrementAndGet() % 10000 == 0) {
+            	System.out.println(counter.get());
+            	storeBloomFilter();
+            }
         }
         return isDuplicate;
     }

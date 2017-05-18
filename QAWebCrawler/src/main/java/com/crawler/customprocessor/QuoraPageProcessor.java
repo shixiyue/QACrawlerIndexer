@@ -161,16 +161,7 @@ public class QuoraPageProcessor implements PageProcessor {
 		String url = "https://www.quora.com/I-wanna-study-hard-but-I-cant-how-can-I-motivate-myself-for-that";
 		int numOfExpectedData = 50000000;
 		double falseRate = 0.01;
-		final PersistentBloomFilter pbf;
-
-		File file = new File(bloomObjPath);
-		if (file.exists() && file.isFile()) {
-			pbf = new PersistentBloomFilter(numOfExpectedData, falseRate, bloomObjPath);
-			System.out.println("Bloom Filter Object exists in the path, loading it to current process...");
-		} else {
-			pbf = new PersistentBloomFilter(numOfExpectedData, falseRate);
-			System.out.println("Bloom Filter Object does not exist, preparing a new one...");
-		}
+		final PersistentBloomFilter pbf =  new PersistentBloomFilter(numOfExpectedData, falseRate, bloomObjPath);
 
 		// Docs:
 		// http://webmagic.io/docs/en/posts/ch6-custom-componenet/pipeline.html
@@ -180,7 +171,7 @@ public class QuoraPageProcessor implements PageProcessor {
 
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			public void run() {
-				pbf.storeBloomFilter(bloomObjPath);
+				pbf.storeBloomFilter();
 			}
 		}));
 
