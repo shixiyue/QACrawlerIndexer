@@ -13,7 +13,7 @@
 					"type": "text",
 					"analyzer": "english"
 				},
-				"categories": {
+				"topics": {
 					"type": "text",
 					"analyzer": "english"
 				},
@@ -35,4 +35,5 @@
 	}
 }
 
-# How to use it: curl -XPUT 'localhost:9200/my_index?pretty' -H 'Content-Type: application/json' -d'....the mapping json string above'
+# How to use it:
+curl -XPUT 'localhost:9200/my_index?pretty' -H 'Content-Type: application/json' -d'{"mappings":{"quora":{"_all":{"enabled":false},"properties":{"url":{"type":"keyword","index":false},"question":{"type":"text","analyzer":"english"},"categories":{"type":"text","analyzer":"english"},"answers":{"type":"nested","properties":{"answer":{"type":"text","analyzer":"english"},"vote":{"type":"integer","index":false}}}}}}}'

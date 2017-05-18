@@ -32,7 +32,7 @@ public class QuoraIndexer {
 	private final String index = "qa";
 	private final String type = "quora";
 	private final String defaultHost = "localhost";
-	private final String dataPath = "W:/QuoraData/www.quora.com/";
+	private final String dataPath = "W:/crawlResult - copy/";
 	private final int defaultPort = 9300;
 
 	private Logger logger = LogManager.getLogger(QuoraIndexer.class);
@@ -149,20 +149,17 @@ public class QuoraIndexer {
 	private void updateJson(JSONObject jsonData) {
 		updateTopics(jsonData);
 		updateQuestion(jsonData);
-		updateAnswers(jsonData); // To be removed
 	}
 
 	private void updateTopics(JSONObject jsonData) {
-		JSONArray categoriesArray = (JSONArray) jsonData.get(Config.CATEGORIES);
-		jsonData.remove(Config.CATEGORIES);
-
-		if (categoriesArray == null) {
+		JSONArray topicsArray = (JSONArray) jsonData.get(Config.TOPICS);
+		if (topicsArray == null) {
 			jsonData.put(Config.TOPICS, "");
 			return;
 		}
 		StringJoiner categoriesStringBuilder = new StringJoiner(Config.stringDelimiter);
-		for (Object category : categoriesArray) {
-			categoriesStringBuilder.add((String) category);
+		for (Object topic : topicsArray) {
+			categoriesStringBuilder.add((String) topic);
 		}
 		jsonData.put(Config.TOPICS, categoriesStringBuilder.toString());
 	}
@@ -172,22 +169,6 @@ public class QuoraIndexer {
 				+ (String) jsonData.get(Config.DESCRIPTION);
 		jsonData.put(Config.QUESTION, question);
 		jsonData.remove(Config.DESCRIPTION);
-	}
-
-	// To be removed
-	private static void updateAnswers(JSONObject jsonData) {
-		JSONArray answers = (JSONArray) jsonData.get(Config.ANSWERS);
-		if (answers == null) {
-			return;
-		}
-		for (Object answer : answers) {
-			JSONObject answerObject = (JSONObject) answer;
-			try {
-				answerObject.put(Config.VOTE, Integer.parseInt((String) answerObject.get(Config.VOTE)));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 }
