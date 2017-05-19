@@ -13,6 +13,14 @@ public class Config {
 	public final static String ANSWERS = "answers";
 	public final static String TOPICS = "topics";
 	
+	// Settings
+	public final static String dataPath = "/crawl";
+	public final static String fileCachePath = "src/main/resources/filecachepath/";
+	public final static String seleniumPath = "src/main/resources/chromedriver";
+	public final static int numOfThread = 1;
+	public final static int numOfExpectedData = 50000000;
+	public final static double falseRate = 0.01;
+	
 	// Crawler configuration
 	public final static Site site = Site.me().setCycleRetryTimes(5).setRetryTimes(5).setSleepTime(1000).setTimeOut(3 * 60 * 1000)
             .setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0")

@@ -1,33 +1,21 @@
 package com.crawler.customprocessor;
 
-import com.crawler.customutil.PersistentBloomFilter;
 import com.crawler.customutil.Config;
-import com.crawler.customutil.CustomJsonFilePipeline;
 
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.downloader.selenium.SeleniumDownloader;
-import us.codecraft.webmagic.monitor.SpiderMonitor;
-import us.codecraft.webmagic.pipeline.JsonFilePipeline;
-import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 import us.codecraft.webmagic.selector.Html;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.management.JMException;
 
-import net.htmlparser.jericho.Source;
-
 /**
  * Represents a page processor that can process web pages of Quora. It uses the
  * crawler framework WebMagic.
  */
-public class QuoraPageProcessor implements PageProcessor {
+public class QuoraPageProcessor extends CustomPageProcessor {
 
 	/**
 	 * Processes the page.
@@ -55,17 +43,17 @@ public class QuoraPageProcessor implements PageProcessor {
 	private void extractContent(Page page) {
 		String url = page.getUrl().toString();
 		String question = page.getHtml().xpath("//h1//span[@class='rendered_qtext']/text()").toString();
+		String description = page.getHtml()
+				.xpath("//div[@class='question_details']//span[@class='rendered_qtext']/text()").toString();
 		List<String> topics = page.getHtml()
 				.xpath("//div[@class='QuestionTopicListItem TopicListItem topic_pill']/div/a//span[@class='TopicNameSpan TopicName']/text()")
 				.all();
-		String description = page.getHtml()
-				.xpath("//div[@class='question_details']//span[@class='rendered_qtext']/text()").toString();
 		ArrayList<HashMap<String, Object>> answerList = getAnswerList(page);
 
 		page.putField(Config.URL, url);
-		page.putField(Config.TOPICS, topics);
 		page.putField(Config.QUESTION, question);
 		page.putField(Config.DESCRIPTION, description);
+		page.putField(Config.TOPICS, topics);
 		page.putField(Config.ANSWERS, answerList);
 
 		if (shouldSkip(question, answerList)) {
@@ -125,19 +113,6 @@ public class QuoraPageProcessor implements PageProcessor {
 	}
 
 	/**
-	 * Extracts all text from the given html text
-	 */
-	private String extractAllText(String htmlText) {
-		Source source = new Source(htmlText);
-		return source.getTextExtractor().toString();
-	}
-
-	@Override
-	public Site getSite() {
-		return Config.site;
-	}
-
-	/**
 	 * The Spider starts from links given in
 	 * "src\main\resources\filecachepath\www.quora.com.urls.txt" and find more
 	 * pages to crawl through the Quora related question field. New links will
@@ -148,35 +123,15 @@ public class QuoraPageProcessor implements PageProcessor {
 	 * questions that are evenly distributed in 30 most popular topics (i.e. we
 	 * select 5 questions from each topic), based on the list in
 	 * https://www.quora.com/What-are-the-most-followed-topics-on-Quora-2 Those
-	 * links are chosen for initial links.
+	 * links are chosen for seed links.
 	 *
 	 * @param args
 	 * @throws JMException
 	 */
 	public static void main(String[] args) throws JMException {
-		final String bloomObjPath = "src/main/resources/bloompath/bloom.ser";
-		String fileCachePath = "src/main/resources/filecachepath/";
-		String seleniumPath = "src/main/resources/chromedriver";
+		final String bloomObjPath = "src/main/resources/bloompath/quora/bloom.ser";
 		// A dummy placeholder URL.
-		String url = "https://www.quora.com/I-wanna-study-hard-but-I-cant-how-can-I-motivate-myself-for-that";
-		int numOfExpectedData = 50000000;
-		double falseRate = 0.01;
-		final PersistentBloomFilter pbf =  new PersistentBloomFilter(numOfExpectedData, falseRate, bloomObjPath);
-
-		// Docs:
-		// http://webmagic.io/docs/en/posts/ch6-custom-componenet/pipeline.html
-		Spider quoraSpider = Spider.create(new QuoraPageProcessor()).addUrl(url)
-				.addPipeline(new CustomJsonFilePipeline("/crawlResult")).setDownloader(new SeleniumDownloader(seleniumPath))
-				.thread(10).setScheduler(new FileCacheQueueScheduler(fileCachePath).setDuplicateRemover(pbf));
-
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			public void run() {
-				pbf.storeBloomFilter();
-			}
-		}));
-
-		quoraSpider.run();
-
-		SpiderMonitor.instance().register(quoraSpider);
+		String initialUrl = "https://www.quora.com/I-wanna-study-hard-but-I-cant-how-can-I-motivate-myself-for-that";
+		run(new QuoraPageProcessor(), initialUrl, bloomObjPath);
 	}
 }
