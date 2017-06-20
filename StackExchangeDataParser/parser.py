@@ -3,8 +3,7 @@ import xml.etree.ElementTree as ET
 import re
 import os
 from utility import *
-
-html_re = re.compile('<[^<]+?>')
+from bs4 import BeautifulSoup
 
 def process_posts():
     all_websites = os.listdir(data_path)
@@ -29,7 +28,7 @@ def read_posts(website, data_directory, parsed_data_directory):
 # Parses the line in xml format that belongs to the given website
 def parse_line(xml_line, website):
     post_id = xml_line.attrib[ID]
-    description = remove_new_line(remove_html_tags(xml_line.attrib[BODY]))
+    description = remove_html_tags(xml_line.attrib[BODY])
     type_id = xml_line.attrib[POST_TYPE_ID]
     vote = int(xml_line.attrib[SCORE])
     if type_id == QUESTION_TYPE_ID:
@@ -54,9 +53,9 @@ def should_skip_answer(vote):
 def parse_question(xml, website, post_id, description, vote):
     url = LINK_PREFIX + website + LINK_SUFFIX + post_id
     title = xml.attrib[TITLE]
-    categories = default_categories(website)
-    categories.extend(format_tags(xml.attrib[TAGS]))
-    question_answers = {URL: url, CATEGORIES: categories, QUESTION: title,
+    topics = default_topics(website)
+    topics.extend(format_tags(xml.attrib[TAGS]))
+    question_answers = {URL: url, TOPICS: topics, QUESTION: title,
         DESCRIPTION: description, VOTE: vote, ANSWERS: []}
     file_name = parsed_data_path + website + '/' + post_id + '.json'
     with open(file_name, mode='w', encoding='utf-8') as json_data:
@@ -78,7 +77,8 @@ def skip_first_two_rows(posts):
     next(posts)
 
 def remove_html_tags(string):
-     return (re.sub(html_re, '', string)).replace('&nbsp;', '')
+    soup = BeautifulSoup(string, "html.parser")
+    return remove_new_line(soup.get_text())
 
 def remove_new_line(string):
     return re.sub( '\s+', ' ', string).strip()

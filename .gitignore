@@ -15,5 +15,8 @@ QAWebCrawler/src/main/resources/filecachepath/www.quora.com.cursor.txt
 
 QAWebCrawler/src/main/resources/filecachepath/www.quora.com.urls.txt
 
+StackExchangeDataParser/parsed/
+StackExchangeDataParser/data/
+
 .*
 *.class

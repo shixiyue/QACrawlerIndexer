@@ -6,6 +6,7 @@ Sample post:
 data_path = 'data/'
 data_file_name = '/Posts.xml'
 parsed_data_path = 'parsed/'
+filtered_data_path = 'filtered/'
 
 LINK_PREFIX = 'http://'
 LINK_SUFFIX = '/questions/'
@@ -21,7 +22,7 @@ TAGS = 'Tags'
 PARENT_ID = 'ParentId'
 
 URL = 'url'
-CATEGORIES = 'categories'
+TOPICS = 'topics'
 QUESTION = 'question'
 DESCRIPTION = 'description'
 VOTE = 'vote'
@@ -84,17 +85,17 @@ special_websites = {
     'woodworking': ['wood']
 }
 
-def default_categories(website):
+def default_topics(website):
     split_website = website.split('.')
     if split_website[0] in special_websites:
         return list(special_websites[split_website[0]])
     elif split_website[0] == 'meta':
         # eg: original website: meta.computergraphics.stackexchange.com
-        categories = ['meta']
+        topics = ['meta']
         if split_website[1] in special_websites:
-            categories.extend(list(special_websites[split_website[1]]))
+            topics.extend(list(special_websites[split_website[1]]))
         else:
-            categories.append(split_website[1])
-        return categories
+            topics.append(split_website[1])
+        return topics
     else:
         return [split_website[0]]

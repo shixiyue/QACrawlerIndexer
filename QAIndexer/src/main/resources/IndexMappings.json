@@ -1,6 +1,6 @@
 {
 	"mappings": {
-		"quora": {
+		"qa": {
 			"_all": {
 				"enabled": false
 			},
@@ -17,6 +17,9 @@
 					"type": "text",
 					"analyzer": "english"
 				},
+				"vote": {
+					"type": "integer"
+				},
 				"answers": {
 					"type": "nested",
 					"properties": {
@@ -25,8 +28,7 @@
 							"analyzer": "english"
 						},
 						"vote": {
-							"type": "integer",
-							"index": false
+							"type": "integer"
 						}
 					}
 				}
@@ -36,4 +38,4 @@
 }
 
 # How to use it:
-curl -XPUT 'localhost:9200/my_index?pretty' -H 'Content-Type: application/json' -d'{"mappings":{"quora":{"_all":{"enabled":false},"properties":{"url":{"type":"keyword","index":false},"question":{"type":"text","analyzer":"english"},"categories":{"type":"text","analyzer":"english"},"answers":{"type":"nested","properties":{"answer":{"type":"text","analyzer":"english"},"vote":{"type":"integer","index":false}}}}}}}'
+curl -XPUT 'localhost:9200/stack_exchange?pretty' -H 'Content-Type: application/json' -d'{"mappings":{"qa":{"_all":{"enabled":false},"properties":{"url":{"type":"keyword","index":false},"question":{"type":"text","analyzer":"english"},"topics":{"type":"text","analyzer":"english"},"vote":{"type":"integer"},"answers":{"type":"nested","properties":{"answer":{"type":"text","analyzer":"english"},"vote":{"type":"integer"}}}}}}}'
