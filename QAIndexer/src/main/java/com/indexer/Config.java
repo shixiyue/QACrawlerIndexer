@@ -13,5 +13,9 @@ public class Config {
 	
 	// Constants
 	public final static String stringDelimiter = " ";
+	
+	// IP and Port settings
+	public final static String READPEER_IP = "172.29.34.20";
+	public final static int READPEER_PORT = 9300;
 
 }

@@ -17,7 +17,6 @@ public class StackExchangeIndexer {
 				directory = dataPath + directory + "/";
 				Indexer indexer = new Indexer(index, type, directory);
 				indexer.processFiles();
-				//indexer.closeConnection();
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}

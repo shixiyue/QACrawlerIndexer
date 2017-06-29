@@ -17,7 +17,7 @@ public class Config {
 	public final static String dataPath = "/crawl";
 	public final static String fileCachePath = "src/main/resources/filecachepath/";
 	public final static String seleniumPath = "src/main/resources/chromedriver";
-	public final static int numOfThread = 1;
+	public final static int numOfThread = 5;
 	public final static int numOfExpectedData = 50000000;
 	public final static double falseRate = 0.01;
 	

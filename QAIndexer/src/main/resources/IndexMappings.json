@@ -38,4 +38,4 @@
 }
 
 # How to use it:
-curl -XPUT 'localhost:9200/stack_exchange?pretty' -H 'Content-Type: application/json' -d'{"mappings":{"qa":{"_all":{"enabled":false},"properties":{"url":{"type":"keyword","index":false},"question":{"type":"text","analyzer":"english"},"topics":{"type":"text","analyzer":"english"},"vote":{"type":"integer"},"answers":{"type":"nested","properties":{"answer":{"type":"text","analyzer":"english"},"vote":{"type":"integer"}}}}}}}'
+curl -XPUT '172.29.34.20:9200/stack_exchange?pretty' -H 'Content-Type: application/json' -d'{"mappings":{"qa":{"_all":{"enabled":false},"properties":{"url":{"type":"keyword","index":false},"question":{"type":"text","analyzer":"english"},"topics":{"type":"text","analyzer":"english"},"vote":{"type":"integer"},"answers":{"type":"nested","properties":{"answer":{"type":"text","analyzer":"english"},"vote":{"type":"integer"}}}}}}}'

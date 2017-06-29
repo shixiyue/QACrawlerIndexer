@@ -39,12 +39,12 @@ def parse_line(xml_line, website):
         parse_answer(xml_line, website, description, vote)
 
 def remove_not_useful_question(parsed_data_directory):
-    all_parsed_data = os.listdir(parsed_data_directory)
-    for data_file_name in all_parsed_data:
-        with open(parsed_data_directory + data_file_name, mode='r', encoding='utf-8') as json_data:
+    for entry in os.scandir(parsed_data_directory):
+        with open(entry.path, mode='r', encoding='utf-8') as json_data:
             question_answers = json.load(json_data)
         if len(question_answers[ANSWERS]) == 0:
-            os.remove(parsed_data_directory + data_file_name)
+            print(entry.path)
+            os.remove(entry.path)
 
 def should_skip_answer(vote):
     return vote < 1

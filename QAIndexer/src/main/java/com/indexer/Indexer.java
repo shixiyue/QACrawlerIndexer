@@ -29,8 +29,8 @@ import com.indexer.Config;
 
 public class Indexer {
 
-	private final static String defaultHost = "localhost";
-	private final static int defaultPort = 9300;
+	private final static String defaultHost = Config.READPEER_IP;
+	private final static int defaultPort = Config.READPEER_PORT;
 	
 	private Logger logger = LogManager.getLogger(QuoraIndexer.class);
 	
