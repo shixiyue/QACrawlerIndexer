@@ -15,6 +15,7 @@ public class StackExchangeIndexer {
 		for (String directory: subDirectories) {
 			try {
 				directory = dataPath + directory + "/";
+				System.out.println(directory);
 				Indexer indexer = new Indexer(index, type, directory);
 				indexer.processFiles();
 			} catch (UnknownHostException e) {

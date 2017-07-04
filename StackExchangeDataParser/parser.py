@@ -12,7 +12,6 @@ def process_posts():
         parsed_data_directory = parsed_data_path + website + '/'
 
         read_posts(website, data_directory, parsed_data_directory)
-        remove_not_useful_question(parsed_data_directory)
 
 def read_posts(website, data_directory, parsed_data_directory):
     with open(data_directory, mode='r', encoding='utf-8') as posts:
@@ -38,14 +37,6 @@ def parse_line(xml_line, website):
             return
         parse_answer(xml_line, website, description, vote)
 
-def remove_not_useful_question(parsed_data_directory):
-    for entry in os.scandir(parsed_data_directory):
-        with open(entry.path, mode='r', encoding='utf-8') as json_data:
-            question_answers = json.load(json_data)
-        if len(question_answers[ANSWERS]) == 0:
-            print(entry.path)
-            os.remove(entry.path)
-
 def should_skip_answer(vote):
     return vote < 1
 
@@ -55,8 +46,8 @@ def parse_question(xml, website, post_id, description, vote):
     title = xml.attrib[TITLE]
     topics = default_topics(website)
     topics.extend(format_tags(xml.attrib[TAGS]))
-    question_answers = {URL: url, TOPICS: topics, QUESTION: title,
-        DESCRIPTION: description, VOTE: vote, ANSWERS: []}
+    question_answers = {URL: url, TOPICS: ' '.join(topics), 
+        QUESTION: title + ' ' + description, VOTE: vote, ANSWERS: []}
     file_name = parsed_data_path + website + '/' + post_id + '.json'
     with open(file_name, mode='w', encoding='utf-8') as json_data:
         json.dump(question_answers, json_data, ensure_ascii=False)

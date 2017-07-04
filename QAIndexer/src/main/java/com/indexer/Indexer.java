@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -124,14 +125,20 @@ public class Indexer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		bulkProcessor.close();
+		try {
+			bulkProcessor.awaitClose(10, TimeUnit.MINUTES);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void processJsonFile(JSONParser parser, String file) {
 		try {
 			JSONObject jsonData = (JSONObject) parser.parse(new FileReader(file));
-			updateJson(jsonData);
-			bulkProcessor.add(Requests.indexRequest(index).type(type).source(jsonData));
+			//updateJson(jsonData);
+			if (!shouldSkip(jsonData)) {
+				bulkProcessor.add(Requests.indexRequest(index).type(type).source(jsonData));
+			}
 		} catch (IOException | ParseException e) {
 			e.printStackTrace();
 			logger.error("Failed to add file " + file);
@@ -141,6 +148,11 @@ public class Indexer {
 	private void updateJson(JSONObject jsonData) {
 		updateTopics(jsonData);
 		updateQuestion(jsonData);
+	}
+	
+	private boolean shouldSkip(JSONObject jsonData) {
+		JSONArray answerArray = (JSONArray) jsonData.get(Config.ANSWERS);
+		return answerArray == null || answerArray.size() == 0;
 	}
 
 	private void updateTopics(JSONObject jsonData) {
