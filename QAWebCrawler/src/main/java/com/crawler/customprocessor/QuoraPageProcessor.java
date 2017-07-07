@@ -17,30 +17,13 @@ import javax.management.JMException;
  */
 public class QuoraPageProcessor extends CustomPageProcessor {
 
-	/**
-	 * Processes the page.
-	 */
 	@Override
-	public void process(Page page) {
-		addRelatedQuestionsUrls(page);
-		extractContent(page);
+	public List<String> getRelatedUrls(Page page) {
+		return page.getHtml().xpath("//li[@class='related_question']//a[@class='question_link']/@href").all();
 	}
 
-	/**
-	 * Finds urls from the Quora related question field and adds them to the
-	 * queue to be crawled.
-	 */
-	private void addRelatedQuestionsUrls(Page page) {
-		List<String> relatedUrl = page.getHtml()
-				.xpath("//li[@class='related_question']//a[@class='question_link']/@href").all();
-		page.addTargetRequests(relatedUrl);
-	}
-
-	/**
-	 * Extracts useful content (url, question, description, topics and answer
-	 * list) from the page.
-	 */
-	private void extractContent(Page page) {
+	@Override
+	public void processContent(Page page) {
 		String url = page.getUrl().toString();
 		String question = page.getHtml().xpath("//h1//span[@class='rendered_qtext']/text()").toString();
 		String description = page.getHtml()
@@ -50,15 +33,7 @@ public class QuoraPageProcessor extends CustomPageProcessor {
 				.all();
 		ArrayList<HashMap<String, Object>> answerList = getAnswerList(page);
 
-		page.putField(Config.URL, url);
-		page.putField(Config.QUESTION, question);
-		page.putField(Config.DESCRIPTION, description);
-		page.putField(Config.TOPICS, topics);
-		page.putField(Config.ANSWERS, answerList);
-
-		if (shouldSkip(question, answerList)) {
-			page.setSkip(true);
-		}
+		putPageFields(page, url, question, description, topics, answerList);
 	}
 
 	/**
@@ -96,23 +71,6 @@ public class QuoraPageProcessor extends CustomPageProcessor {
 	}
 
 	/**
-	 * Parses votesText, which is in the format "XX,XXX Upvotes".
-	 * 
-	 * @return Integer an integer representation of the number of votes
-	 */
-	private Integer formatVote(String votesText) {
-		return Integer.parseInt(votesText.split(" ")[0].replaceAll(",", ""));
-	}
-
-	/**
-	 * Returns true when the page is not useful and should be skipped, i.e. the
-	 * question is empty or the list of useful answers is empty.
-	 */
-	private boolean shouldSkip(String question, ArrayList<HashMap<String, Object>> answerList) {
-		return question.isEmpty() || answerList.isEmpty();
-	}
-
-	/**
 	 * The Spider starts from links given in
 	 * "src\main\resources\filecachepath\www.quora.com.urls.txt" and find more
 	 * pages to crawl through the Quora related question field. New links will
@@ -134,4 +92,5 @@ public class QuoraPageProcessor extends CustomPageProcessor {
 		String initialUrl = "https://www.quora.com/I-wanna-study-hard-but-I-cant-how-can-I-motivate-myself-for-that";
 		run(new QuoraPageProcessor(), initialUrl, bloomObjPath);
 	}
+
 }
