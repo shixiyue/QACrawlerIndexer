@@ -44,27 +44,20 @@ public class ZhihuPageProcessor extends CustomPageProcessor {
 				.xpath("//div[@class='ContentItem-actions']//button[@class='Button VoteButton VoteButton--up']/text()")
 				.all();
 		ArrayList<HashMap<String, Object>> answerList = new ArrayList<HashMap<String, Object>>();
-		System.out.println(answers.size());
 
 		for (int i = 0; i < answers.size(); i++) {
-			System.out.println(votes.get(i));
 			String votesText = votes.get(i).toString();
 
 			int vote;
-			if (votesText == "0") { // i.e the answer does not have any vote
+			if (votesText.equals("0")) { // i.e the answer does not have any vote
 				// then we consider the answer not useful and don't store it.
 				// (There's no negative vote in Quora)
 				continue;
 			} else {
 				vote = formatVote(votesText);
 			}
-			List<String> paragraphs = new Html(answers.get(i)).xpath("//p/text()").all();
-			String additionalParagraph = new Html(answers.get(i)).xpath("//span/text()").toString();
-			if (additionalParagraph != null) {
-				paragraphs.add(additionalParagraph);
-			}
-			String answerText = String.join(" ", paragraphs);
-			System.out.println(answerText);
+			List<String> paragraphs = new Html(answers.get(i)).xpath("//p//text()|//b/text()|//span/text()").all();
+			String answerText = String.join("", paragraphs);
 
 			HashMap<String, Object> answer = new HashMap<String, Object>();
 			answer.put(Config.VOTE, vote);
@@ -72,6 +65,19 @@ public class ZhihuPageProcessor extends CustomPageProcessor {
 			answerList.add(answer);
 		}
 		return answerList;
+	}
+	
+	/**
+	 * Parses votesText, which is in the format "XX,XXX Upvotes".
+	 * 
+	 * @return Integer an integer representation of the number of votes
+	 */
+	private Integer formatVote(String votesText) {
+		if (votesText.endsWith("K")) {
+			return (int) (Double.parseDouble(votesText.substring(0, votesText.length() - 1)) * 1000);
+		} else {
+			return Integer.parseInt(votesText);
+		}
 	}
 
 	/**

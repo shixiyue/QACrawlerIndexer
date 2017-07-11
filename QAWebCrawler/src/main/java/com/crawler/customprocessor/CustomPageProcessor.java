@@ -43,8 +43,8 @@ public abstract class CustomPageProcessor implements PageProcessor {
 	 */
 	@Override
 	public void process(Page page) {
-		addRelatedQuestionsUrls(page);
 		processContent(page);
+		addRelatedQuestionsUrls(page);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public abstract class CustomPageProcessor implements PageProcessor {
 	 * question is empty or the list of useful answers is empty.
 	 */
 	private boolean shouldSkip(String question, ArrayList<HashMap<String, Object>> answerList) {
-		return question.isEmpty() || answerList.isEmpty();
+		return question == null || question.isEmpty() || answerList.isEmpty();
 	}
 
 	/**
@@ -82,15 +82,6 @@ public abstract class CustomPageProcessor implements PageProcessor {
 	protected String extractAllText(String htmlText) {
 		Source source = new Source(htmlText);
 		return source.getTextExtractor().toString();
-	}
-	
-	/**
-	 * Parses votesText, which is in the format "XX,XXX Upvotes".
-	 * 
-	 * @return Integer an integer representation of the number of votes
-	 */
-	protected Integer formatVote(String votesText) {
-		return Integer.parseInt(votesText.split(" ")[0].replaceAll(",", ""));
 	}
 
 	/**

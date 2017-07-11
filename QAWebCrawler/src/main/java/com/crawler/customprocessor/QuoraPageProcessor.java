@@ -69,6 +69,15 @@ public class QuoraPageProcessor extends CustomPageProcessor {
 		}
 		return answerList;
 	}
+	
+	/**
+	 * Parses votesText, which is in the format "XX,XXX Upvotes".
+	 * 
+	 * @return Integer an integer representation of the number of votes
+	 */
+	private Integer formatVote(String votesText) {
+		return Integer.parseInt(votesText.split(" ")[0].replaceAll(",", ""));
+	}
 
 	/**
 	 * The Spider starts from links given in
