@@ -12,7 +12,7 @@ public class Config {
 	public final static String TOPICS = "topics";
 	
 	// Constants
-	public final static String stringDelimiter = " ";
+	public final static String STRING_DELIMITER = " ";
 	
 	// IP and Port settings
 	public final static String READPEER_IP = "172.29.34.20";

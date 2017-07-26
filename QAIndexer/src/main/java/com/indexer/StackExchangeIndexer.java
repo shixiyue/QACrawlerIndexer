@@ -8,6 +8,8 @@ public class StackExchangeIndexer {
 	private final static String index = "stack_exchange";
 	private final static String type = "qa";
 	private final static String dataPath = "W:/StackExchange/";
+	private final static boolean needUpdate = false;
+	private final static boolean needSkip = true;
 
 	public static void main(String[] args) {
 		File mainDirectory = new File(dataPath);
@@ -17,7 +19,7 @@ public class StackExchangeIndexer {
 				directory = dataPath + directory + "/";
 				System.out.println(directory);
 				Indexer indexer = new Indexer(index, type, directory);
-				indexer.processFiles();
+				indexer.processFiles(needUpdate, needSkip);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			}

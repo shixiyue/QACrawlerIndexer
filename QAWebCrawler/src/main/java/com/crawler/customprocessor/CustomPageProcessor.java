@@ -21,6 +21,9 @@ import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.scheduler.FileCacheQueueScheduler;
 
 public abstract class CustomPageProcessor implements PageProcessor {
+	
+	protected boolean shouldProcessContent;
+	protected boolean shouldAddQuestionUrls;
 
 	/**
 	 * Finds urls from the page related question field.
@@ -43,8 +46,16 @@ public abstract class CustomPageProcessor implements PageProcessor {
 	 */
 	@Override
 	public void process(Page page) {
-		processContent(page);
-		addRelatedQuestionsUrls(page);
+		if (shouldProcessContent) {
+			processContent(page);
+		} else {
+			System.out.println(2);
+			page.setSkip(true);
+		}
+		
+		if (shouldAddQuestionUrls) {
+			addRelatedQuestionsUrls(page);
+		}
 	}
 
 	/**

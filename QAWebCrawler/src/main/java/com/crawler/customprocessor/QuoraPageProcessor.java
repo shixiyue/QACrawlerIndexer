@@ -16,6 +16,11 @@ import javax.management.JMException;
  * crawler framework WebMagic.
  */
 public class QuoraPageProcessor extends CustomPageProcessor {
+	
+	public  QuoraPageProcessor() {
+		shouldProcessContent = true;
+		shouldAddQuestionUrls = true;
+	}
 
 	@Override
 	public List<String> getRelatedUrls(Page page) {

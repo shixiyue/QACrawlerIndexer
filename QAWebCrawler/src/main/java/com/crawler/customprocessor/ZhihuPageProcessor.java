@@ -13,6 +13,11 @@ import com.crawler.customutil.Config;
 import com.crawler.customutil.CustomZhihuSeleniumDownloader;
 
 public class ZhihuPageProcessor extends CustomPageProcessor {
+	
+	public ZhihuPageProcessor() {
+		shouldProcessContent = true;
+		shouldAddQuestionUrls = false;
+	}
 
 	@Override
 	public List<String> getRelatedUrls(Page page) {
