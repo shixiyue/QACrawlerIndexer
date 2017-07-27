@@ -1,8 +1,5 @@
 package com.crawler.customutil;
 
-/**
- * Created by sesame on 3/3/16.
- */
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import us.codecraft.webmagic.Request;
@@ -15,17 +12,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PersistentBloomFilter implements DuplicateRemover {
 
-    private int expectedInsertions;
-    private double fpp;
-    private AtomicInteger counter;
-    private final BloomFilter<CharSequence> bloomFilter;
-    private String path;
+	private int expectedInsertions;
+	private double fpp;
+	private AtomicInteger counter;
+	private final BloomFilter<CharSequence> bloomFilter;
+	private String path;
 
-    public PersistentBloomFilter(int expectedInsertions, double fpp, String path) {
-        this.expectedInsertions = expectedInsertions;
-        this.fpp = fpp;
-        this.path = path;
-        File file = new File(path);
+	public PersistentBloomFilter(int expectedInsertions, double fpp, String path) {
+		this.expectedInsertions = expectedInsertions;
+		this.fpp = fpp;
+		this.path = path;
+		File file = new File(path);
 		if (file.exists() && file.isFile()) {
 			System.out.println("Bloom Filter Object exists in the path, loading it to current process...");
 			this.bloomFilter = rebuildBloomFilter(path);
@@ -33,72 +30,72 @@ public class PersistentBloomFilter implements DuplicateRemover {
 			System.out.println("Bloom Filter Object does not exist, preparing a new one...");
 			this.bloomFilter = rebuildBloomFilter();
 		}
-    }
+	}
 
-    protected BloomFilter<CharSequence> rebuildBloomFilter() {
-        counter = new AtomicInteger(0);
-        return BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), expectedInsertions, fpp);
-    }
+	protected BloomFilter<CharSequence> rebuildBloomFilter() {
+		counter = new AtomicInteger(0);
+		return BloomFilter.create(Funnels.stringFunnel(Charset.defaultCharset()), expectedInsertions, fpp);
+	}
 
-    protected BloomFilter<CharSequence> rebuildBloomFilter(String path) {
-        counter = new AtomicInteger(0);
-        Object  object = readObject(path);
-        return (BloomFilter) object;
-    }
+	protected BloomFilter<CharSequence> rebuildBloomFilter(String path) {
+		counter = new AtomicInteger(0);
+		Object object = readObject(path);
+		return (BloomFilter) object;
+	}
 
-    public void storeBloomFilter() {
-        writeObject(bloomFilter, path);
-    }
+	public void storeBloomFilter() {
+		writeObject(bloomFilter, path);
+	}
 
-    @Override
-    public boolean isDuplicate(Request request, Task task) {
-        boolean isDuplicate = bloomFilter.mightContain(getUrl(request));
-        if (!isDuplicate) {
-            bloomFilter.put(getUrl(request));
-            if (counter.incrementAndGet() % 10000 == 0) {
-            	System.out.println(counter.get());
-            	storeBloomFilter();
-            }
-        }
-        return isDuplicate;
-    }
+	@Override
+	public boolean isDuplicate(Request request, Task task) {
+		boolean isDuplicate = bloomFilter.mightContain(getUrl(request));
+		if (!isDuplicate) {
+			bloomFilter.put(getUrl(request));
+			if (counter.incrementAndGet() % 10000 == 0) {
+				System.out.println(counter.get());
+				storeBloomFilter();
+			}
+		}
+		return isDuplicate;
+	}
 
-    protected String getUrl(Request request) {
-        return request.getUrl();
-    }
+	protected String getUrl(Request request) {
+		return request.getUrl();
+	}
 
-    @Override
-    public void resetDuplicateCheck(Task task) {
-        rebuildBloomFilter();
-    }
+	@Override
+	public void resetDuplicateCheck(Task task) {
+		rebuildBloomFilter();
+	}
 
-    @Override
-    public int getTotalRequestsCount(Task task) {
-        return counter.get();
-    }
+	@Override
+	public int getTotalRequestsCount(Task task) {
+		return counter.get();
+	}
 
-    public void writeObject(Serializable s, String path) {
-        try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(path));
-            objectOutputStream.writeObject(s);
-            objectOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+	public void writeObject(Serializable s, String path) {
+		try {
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(path));
+			objectOutputStream.writeObject(s);
+			objectOutputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public Object readObject(String path) {
-        Object object = null;
-        try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(path));
-            object = objectInputStream.readObject();
-            objectInputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+	public Object readObject(String path) {
+		Object object = null;
+		try {
+			ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(path));
+			object = objectInputStream.readObject();
+			objectInputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 
-        return object;
-    }
+		return object;
+	}
 }

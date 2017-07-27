@@ -1,0 +1,35 @@
+{
+   "mappings":{
+      "qa":{
+         "_all":{
+            "enabled":false
+         },
+         "properties":{
+            "url":{
+               "type":"keyword",
+               "index":false
+            },
+            "question":{
+               "type":"text",
+               "analyzer":"english"
+            },
+            "topics":{
+               "type":"text",
+               "analyzer":"english"
+            },
+            "answers":{
+               "type":"nested",
+               "properties":{
+                  "answer":{
+                     "type":"text",
+                     "analyzer":"english"
+                  },
+                  "vote":{
+                     "type":"integer"
+                  }
+               }
+            }
+         }
+      }
+   }
+}

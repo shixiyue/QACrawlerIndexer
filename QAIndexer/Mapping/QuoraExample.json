@@ -1,0 +1,33 @@
+{
+   "_index":"quora",
+   "_type":"qa",
+   "_id":"AV0sI_Oqi63AB6rmSLLH",
+   "_score":8.888749,
+   "_source":{
+      "question":"Why don't we have a GOTO in Java? ",
+      "topics":"Core Java Questions Goto Core Java Java Developers Java (programming language) Programming Languages Computer Programming",
+      "answers":[
+         {
+            "answer":"Java does not support goto, it is reserved as a keyword in case they wanted to add it to a later version. Java also does not use line numbers, which is a necessity for a GOTO function. Unlike C/C++, Java does not have goto statement, but java supports label. The only place where a label is useful in Java is right before nested loop statements. We can specify label name with break to break out a specific outer loop.",
+            "vote":1
+         },
+         {
+            "answer":"Java do have GOTO statement as reserved keyword in the keyword list. Here is a the keyword list. Java Language Keywords It is present in the keyword list but it is marked as unused ,because maybe in near future it can be reintroduced.The main reason behind not to use the GOTO statement is we can replace it with much more efficient keywords like BREAK and CONTINUE which provides more efficient language processing. Morever multilevel Break and Continue removes almost every possible reason to use GOTO. Happy coding.",
+            "vote":2
+         },
+         {
+            "answer":"First of all i will tell u the use of GOTO statement: The goto statement transfers the program control directly to a labeled statement. A common use of goto is to transfer control to a specific switch-case label or the default label in a switch statement. The goto statement is also useful to get out of deeply nested loops. The goto keyword is only reserved, but not used (the same goes for const). Although you can use break label; and continue label; statements to effectively do what goto does. The Java keyword list specifies the goto keyword, but it is marked as \"not used\". This was probably done in case it were to be added to a later version of Java. If goto was not on the list, and it gets added to the language later on, existing code that used the word goto as an identifier (variable name, method name, etc...) would break. But because goto is a keyword, such code will not even compile in the present, and it remains possible to make it actually do something later on, without breaking existing code.",
+            "vote":3
+         },
+         {
+            "answer":"Java Doesn't  have goto because it doesn't want to mess up the language. Actually , C/C++ has their own limitations & drawbacks. Why the heck does programmer needs to manage the memory if the language itself can take care of it. That's why pointers are removed from JAVA and that's one of the reason I LOVE java. And any language can become successful if it supports good readability. Removal of GOTO achieves readability. and still it is reserved keyword in Java to support it in the future versions if they(Oracle) wants to include it. And With Oracle taking over the JAVA from Sun , I am really scared that they are going to screw up the language. (Already Java 8 version) proves that. P.S: The answer might be after long time from date asked but still as a Java nerd , I can't resist to share my opinitions. (maybe helpful who lands in this thread).",
+            "vote":3
+         },
+         {
+            "answer":"The Java keyword list specifies the goto keyword, but it is marked as \"not used\". This was probably done in case it were to be added to a later version of Java. If goto weren't on the list, and it were added to the language later on, existing code that used the word goto as an identifier (variable name, method name, etcetera) would break. But because goto is a keyword, such code will not even compile in the present, and it remains possible to make it actually do something later on, without breaking existing code.",
+            "vote":2
+         }
+      ],
+      "url":"https://www.quora.com/Why-dont-we-have-a-GOTO-in-Java"
+   }
+}

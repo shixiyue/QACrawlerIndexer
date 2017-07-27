@@ -1,0 +1,26 @@
+{
+   "_index":"stack_exchange",
+   "_type":"qa",
+   "_id":"AV0TSedei63AB6rmJf_a",
+   "_score":6.44182,
+   "_source":{
+      "question":"Should we be using functional and/or logic programming languages more? I've programmed a bit of Haskell and Prolog as part of a couple of uni courses, but that's about it. And I've never seen it been used in industry (not that I've had much of working experience to begin with but I've never seen an ad where you are required to know them). So should we be using functional and/or logic programming languages more often? Are there any advantages or disadvantages for using or not using them?",
+      "topics":"programmers programming languages functional programming",
+      "answers":[
+         {
+            "answer":"I believe in using the right tool for the job. Both imperative and functional languages have their place and there's no need to push for using one kind more than the other. For the advantages/disadvantages, I don't think I could beat Eric Lippert's answer to the \"Why hasn't functional programming taken over yet?\" SO question.",
+            "vote":9
+         },
+         {
+            "answer":"A programming language is a form of representation of information. In this case instructions for the computer to follow. However, the representation also is important for the target audience (i.e. the programmers). Functional/logical concept are not as commonly used in daily life as procedural concepts. If you read instructions (i.e. how to use your television, dvd player, or build some furniture from IKEA), they are mostly written in a procedural way (albeit in natural language). Therefore, a lot of people that are not very deeply involved in math or sciences often are far more familiar with such procedural concepts than the logical or functional ones. I think this has a lot of impact in the choice of which class of programming language is used. In the end, the set of problems that can be solved with any of such programming languages is pretty much the same (as long as they are all turing complete). However, a lot of procedural languages obtaining more and more facets of other concepts. Python can do lambda-calculus and closures, ruby as well. Javascript which is haevily used in industry is actually really a functional language (even most people \"misuse\" is by using it more in a procedural way). Therefore, it is really the task of the programmer to use those features appropriately where they fit.",
+            "vote":2
+         },
+         {
+            "answer":"First of all - because the compiler have to do much more. If you want to create imperative compiler you can nearly do 1-1 transformation to assembler and the code produced will have acceptable speed (sure - there could be much to do but it is 'basicly' 1-1 compilation + optimalisation). Functional compilers HAVE TO handle well heavy inlineing, tail-call optimalisation etc. Therefore implementation of functional languages were much slower then C/C++/... in past (however they gain much speed each iteration as compilers are getting better). Secondly - programmers are so used to state that they cannot 'accept' \"there is no spoo... state\" approach. Sure - the lack of state is not useful in each condition but the lack of (global) state does not mean lack of local state. Thirdly - functional programming have no nice story behind it. The OOP have nice story as the objects maps to nouns and how intuitive it is. Afterwards you know that it is not so simple because you cannot create a class Manager as subclass of Employee as Employee may get promote to Manager and you have to play around decorators. The functional programs have story in mathematics which is IMHO more useful but less marketable. As internally from the computer perspective - there is no difference between parallel and concurrent computing many programmers do not see a difference and many languages have the same primitives to handle both. Thank to lack of local state and lightweight threads in functional programming languages the parallelisation of algorithm is much easier. However concurrent programming is not made automatically easier as concurrency is about global state. Finally - there is a lot of older programs written in inperative style. Even porting from imperative language to imperative language is much simpler then to functional one. As far as I know investment banks start embracing the functional programs internally so they DO come into XXI c. (in very important although hidden area) - so they do gain momentum. PS. While I believe that functional programs are \"better\" in meaning they hide the complexity better then other approaches it does not mean that there are no areas such as scripts that are inherently imperative.",
+            "vote":5
+         }
+      ],
+      "vote":8,
+      "url":"http://programmers.stackexchange.com/questions/4391"
+   }
+}

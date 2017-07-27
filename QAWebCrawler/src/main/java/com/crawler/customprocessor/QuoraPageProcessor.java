@@ -16,8 +16,8 @@ import javax.management.JMException;
  * crawler framework WebMagic.
  */
 public class QuoraPageProcessor extends CustomPageProcessor {
-	
-	public  QuoraPageProcessor() {
+
+	public QuoraPageProcessor() {
 		shouldProcessContent = true;
 		shouldAddQuestionUrls = true;
 	}
@@ -74,7 +74,7 @@ public class QuoraPageProcessor extends CustomPageProcessor {
 		}
 		return answerList;
 	}
-	
+
 	/**
 	 * Parses votesText, which is in the format "XX,XXX Upvotes".
 	 * 

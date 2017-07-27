@@ -12,8 +12,12 @@ import javax.management.JMException;
 import com.crawler.customutil.Config;
 import com.crawler.customutil.CustomZhihuSeleniumDownloader;
 
+/**
+ * Represents a page processor that can process web pages of Zhihu. It uses the
+ * crawler framework WebMagic.
+ */
 public class ZhihuPageProcessor extends CustomPageProcessor {
-	
+
 	public ZhihuPageProcessor() {
 		shouldProcessContent = true;
 		shouldAddQuestionUrls = false;
@@ -54,9 +58,9 @@ public class ZhihuPageProcessor extends CustomPageProcessor {
 			String votesText = votes.get(i).toString();
 
 			int vote;
-			if (votesText.equals("0")) { // i.e the answer does not have any vote
+			if (votesText.equals("0")) { // i.e the answer does not have any
+											// vote
 				// then we consider the answer not useful and don't store it.
-				// (There's no negative vote in Quora)
 				continue;
 			} else {
 				vote = formatVote(votesText);
@@ -71,9 +75,10 @@ public class ZhihuPageProcessor extends CustomPageProcessor {
 		}
 		return answerList;
 	}
-	
+
 	/**
-	 * Parses votesText, which is in the format "XX,XXX Upvotes".
+	 * Parses votesText, which is in the format "XXK (the K is optional)
+	 * Upvotes".
 	 * 
 	 * @return Integer an integer representation of the number of votes
 	 */
@@ -87,16 +92,14 @@ public class ZhihuPageProcessor extends CustomPageProcessor {
 
 	/**
 	 * The Spider starts from links given in
-	 * "src\main\resources\filecachepath\www.quora.com.urls.txt" and find more
-	 * pages to crawl through the Quora related question field. New links will
-	 * be added to the txt file. Those pages will be downloaded, processed and
-	 * output as json files.
+	 * "src\main\resources\filecachepath\www.zhihu.com.urls.txt".
 	 * 
-	 * Note: "www.quora.com.urls - Copy.txt" contains links of 150 popular
-	 * questions that are evenly distributed in 30 most popular topics (i.e. we
-	 * select 5 questions from each topic), based on the list in
-	 * https://zhuanlan.zhihu.com/p/21395286 Those links are chosen for seed
-	 * links.
+	 * The method that collect more links through Zhihu related question field
+	 * is not useful, as we can only get limited questions (less than 5k)
+	 * through this method. Thus, we need to provide all links at the start. We
+	 * can collect all questions under a specific topic through: 1. first run
+	 * resources/filecachepath/generate_url.py 2. then run
+	 * ZhihuQuestionLinkCollector
 	 *
 	 * @param args
 	 * @throws JMException

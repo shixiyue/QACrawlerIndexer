@@ -54,18 +54,6 @@ public class Indexer {
 	}
 
 	/**
-	 * Constructor which sets index and ip for elasticsearch
-	 * 
-	 * @param ip
-	 *            IP of the server running elasticsearch
-	 * @throws UnknownHostException
-	 *             The host is unknown
-	 */
-	public Indexer(String ip, String index, String type, String dataPath) throws UnknownHostException {
-		this(ip, defaultPort, index, type, dataPath);
-	}
-
-	/**
 	 * Constructor which sets index, ip, and port for elasticsearch
 	 * 
 	 * @param ip
@@ -114,6 +102,9 @@ public class Indexer {
 		client.close();
 	}
 
+	/**
+	 * Indexes all files in the given folder.
+	 */
 	public void processFiles(Boolean needUpdate, Boolean needSkip) {
 		JSONParser parser = new JSONParser();
 		initBulkProcessor();
@@ -155,12 +146,18 @@ public class Indexer {
 		updateQuestion(jsonData);
 	}
 
+	/**
+	 * Skips the question if the question does not have any valid answer.
+	 */
 	private boolean shouldSkip(JSONObject jsonData) {
 		JSONArray answerArray = (JSONArray) jsonData.get(Config.ANSWERS);
 		return answerArray == null || answerArray.size() == 0;
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Joins an array of topics to a string.
+	 */
 	private void updateTopics(JSONObject jsonData) {
 		JSONArray topicsArray = (JSONArray) jsonData.get(Config.TOPICS);
 		if (topicsArray == null) {
@@ -175,6 +172,9 @@ public class Indexer {
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Combines question and description to a single field.
+	 */
 	private void updateQuestion(JSONObject jsonData) {
 		String question = (String) jsonData.get(Config.QUESTION) + Config.STRING_DELIMITER
 				+ (String) jsonData.get(Config.DESCRIPTION);
